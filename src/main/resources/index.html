@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>@monitoring.site.title@</title>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <script src="data.js"></script>
+</head>
+<body>
+    <div id="tempchart" style="width:1000px; height:600px;"></div>
+
+    <script type="text/javascript">
+            g = new Dygraph(document.getElementById("tempchart"), data_temp,
+                    {
+                        rollPeriod: 14,
+                        showRoller: true,
+                        customBars: true,
+                        title: 'Daily Temperature',
+                        ylabel: 'Temperature (C°)',
+                        legend: 'always',
+                        labelsDivStyles: { 'textAlign': 'right' },
+                        showRangeSelector: true,
+                        rangeSelectorHeight: 30,
+                        rangeSelectorPlotStrokeColor: 'lightblue',
+                        rangeSelectorPlotFillColor: 'lightgray'
+                    });
+    </script>
+</body>
+</html>
