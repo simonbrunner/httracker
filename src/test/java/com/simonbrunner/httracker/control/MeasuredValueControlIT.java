@@ -1,8 +1,10 @@
 package com.simonbrunner.httracker.control;
 
 import com.simonbrunner.httracker.HtTrackerApplication;
+import com.simonbrunner.httracker.entity.AggregatedValue;
 import com.simonbrunner.httracker.entity.MeasuredValue;
 import com.simonbrunner.httracker.entity.MeasurementType;
+import com.simonbrunner.httracker.repository.AggregatedValueRepository;
 import com.simonbrunner.httracker.repository.MeasuredValueRepository;
 import com.simonbrunner.httracker.util.DateUtil;
 import org.junit.Before;
@@ -15,11 +17,15 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(HtTrackerApplication.class)
-// @ContextConfiguration(classes = {MeasuredValueControl.class, MeasuredValueRepository.class})
 public class MeasuredValueControlIT {
 
     private static final Logger log = LoggerFactory.getLogger(MeasuredValueControlIT.class);
@@ -28,50 +34,57 @@ public class MeasuredValueControlIT {
     MeasuredValueControl objectUnderTest;
 
     @Autowired
+    AggregatedValueRepository aggregatedValueRepository;
+    @Autowired
     MeasuredValueRepository measuredValueRepository;
 
-    List<MeasuredValue> measuredValues = new ArrayList<>();
+    @Test
+    public void condenseData_UsingEmptyDatabase() {
+        measuredValueRepository.deleteAll();
 
-    @Before
-    public void init() {
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 0, 0), 10.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 1, 0), 10d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 2, 0), 9.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 3, 0), 9d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 4, 0), 8.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 5, 0), 8d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 6, 0), 8.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 7, 0), 9d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 8, 0), 10d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 9, 0), 10d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 10, 0), 10.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 11, 0), 11d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 12, 0), 11.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 13, 0), 12d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 14, 0), 12.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 15, 0), 13d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 16, 0), 12.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 17, 0), 12d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 18, 0), 12d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 19, 0), 11.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 20, 0), 11d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 21, 0), 11d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 22, 0), 10.5d, MeasurementType.TEMPERATURE));
-        measuredValues.add(new MeasuredValue(DateUtil.createTimestamp(2015, 12, 1, 23, 0), 10.5d, MeasurementType.TEMPERATURE));
-
-        for (MeasuredValue measuredValue : measuredValues) {
-            log.info("Persisting entity {}", measuredValue);
-            measuredValueRepository.save(measuredValue);
-        }
+        // Run against an empty database
+        objectUnderTest.condenseData(MeasurementType.TEMPERATURE);
     }
 
     @Test
-    public void condenseDailyValues() {
-        Iterable<MeasuredValue> persistedValues = measuredValueRepository.findAll();
-        for (MeasuredValue persistedValue : persistedValues) {
-            log.info("Loaded {} item from database: {}", MeasuredValue.class.getSimpleName(), persistedValue);
+    public void condenseData() {
+        // Setup some test data
+        createMeasuredValues(2015, 12, 1, 10.0, 1, MeasurementType.TEMPERATURE);
+        createMeasuredValues(2015, 12, 2, 20.0, 1, MeasurementType.TEMPERATURE);
+        createMeasuredValues(2015, 12, 3, 30.0, 1, MeasurementType.TEMPERATURE);
+        // --> create values for today and expect them to not get aggregated
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        createMeasuredValues(year, month, day, 10.0, 1, MeasurementType.TEMPERATURE);
+
+        // Run the method under test
+        objectUnderTest.condenseData(MeasurementType.TEMPERATURE);
+
+        // Verify the persisted values
+        Iterable<AggregatedValue> aggregatedValues = aggregatedValueRepository.findAllByOrderByDayAsc();
+        Double expectedAvg = 21.5;
+        Double expectedMin = 10.0;
+        Double expectedMax = 33.0;
+        for (AggregatedValue aggregatedValue : aggregatedValues) {
+            log.info("AggregatedValue loaded from database: {}", aggregatedValue);
+            assertThat(aggregatedValue.getAverage(), is(expectedAvg));
+            assertThat(aggregatedValue.getMin(), is(expectedMin));
+            assertThat(aggregatedValue.getMax(), is(expectedMax));
+
+            expectedAvg += 10;
+            expectedMin += 10;
+            expectedMax += 10;
         }
     }
 
-
+    private void createMeasuredValues(int year, int month, int day, Double startValue, int increment, MeasurementType measurementType) {
+        Double value = startValue;
+        for (int hour = 0; hour < 24; hour++) {
+            MeasuredValue measuredValue = new MeasuredValue(DateUtil.createTimestamp(year, month, day, hour, 0), value, measurementType);
+            measuredValueRepository.save(measuredValue);
+            value += increment;
+        }
+    }
 }

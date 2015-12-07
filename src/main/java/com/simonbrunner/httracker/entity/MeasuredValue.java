@@ -1,5 +1,7 @@
 package com.simonbrunner.httracker.entity;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -63,5 +65,10 @@ public class MeasuredValue {
 
     public void setType(MeasurementType type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }
