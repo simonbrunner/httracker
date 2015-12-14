@@ -14,15 +14,21 @@ public class DateUtil {
 
     public static final String DATE_PATTERN = "dd.MM.yyyy";
     public static final String DATETIME_PATTERN = "dd.MM.yyyy HH:mm";
+    public static final String DATE_REPORT_PATTERN = "yyyyMMdd";
 
     public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance(DATE_PATTERN);
     public static final FastDateFormat DATETIME_FORMAT = FastDateFormat.getInstance(DATETIME_PATTERN);
+    public static final FastDateFormat DATE_REPORT_FORMAT = FastDateFormat.getInstance(DATE_REPORT_PATTERN);
 
     private DateUtil() {
     }
 
     public static String formatDay(Date date) {
         return DATE_FORMAT.format(date);
+    }
+
+    public static String formatDayForReport(Date date) {
+        return DATE_REPORT_FORMAT.format(date);
     }
 
     public static Date parseDay(String date) {
