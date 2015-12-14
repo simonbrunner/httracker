@@ -49,8 +49,8 @@ public class AggregatedValueControl {
 
             // Generate the output file
             StringWriter out = new StringWriter();
-            Template temp = cfg.getTemplate(TEMPLATE_NAME);
-            temp.process(dataModel, out);
+            Template template = cfg.getTemplate(TEMPLATE_NAME);
+            template.process(dataModel, out);
 
             log.info("Generated Javascript export: {}", out.getBuffer());
         } catch (Exception e) {
