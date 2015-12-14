@@ -7,7 +7,6 @@ import com.simonbrunner.httracker.entity.MeasurementType;
 import com.simonbrunner.httracker.repository.AggregatedValueRepository;
 import com.simonbrunner.httracker.repository.MeasuredValueRepository;
 import com.simonbrunner.httracker.util.DateUtil;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -63,7 +59,7 @@ public class MeasuredValueControlIT {
         objectUnderTest.condenseData(MeasurementType.TEMPERATURE);
 
         // Verify the persisted values
-        Iterable<AggregatedValue> aggregatedValues = aggregatedValueRepository.findAllByOrderByDayAsc();
+        Iterable<AggregatedValue> aggregatedValues = aggregatedValueRepository.findByTypeOrderByDayAsc(MeasurementType.TEMPERATURE);
         Double expectedAvg = 21.5;
         Double expectedMin = 10.0;
         Double expectedMax = 33.0;

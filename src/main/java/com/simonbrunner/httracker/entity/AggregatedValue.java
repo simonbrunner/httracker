@@ -1,5 +1,6 @@
 package com.simonbrunner.httracker.entity;
 
+import com.simonbrunner.httracker.util.DateUtil;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import javax.persistence.*;
@@ -29,6 +30,20 @@ public class AggregatedValue {
     @Column(nullable = false)
     private MeasurementType type;
 
+    public AggregatedValue() {
+        super();
+    }
+
+    public AggregatedValue(Date day, Double min, Double average, Double max, MeasurementType type) {
+        super();
+
+        this.day = day;
+        this.min = min;
+        this.average = average;
+        this.max = max;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,6 +54,10 @@ public class AggregatedValue {
 
     public Date getDay() {
         return day;
+    }
+
+    public String getDayFormattedForReport() {
+        return DateUtil.formatDayForReport(day);
     }
 
     public void setDay(Date day) {

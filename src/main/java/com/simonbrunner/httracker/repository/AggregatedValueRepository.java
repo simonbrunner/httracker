@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface AggregatedValueRepository extends CrudRepository<AggregatedValue, Long> {
 
-    List<AggregatedValue> findAllByOrderByDayAsc();
+    List<AggregatedValue> findByTypeOrderByDayAsc(MeasurementType type);
 }
