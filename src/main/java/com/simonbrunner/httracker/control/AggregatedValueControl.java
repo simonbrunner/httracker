@@ -27,7 +27,8 @@ public class AggregatedValueControl {
     @Autowired
     private AggregatedValueRepository aggregatedValueRepository;
 
-    public void exportData(MeasurementType measurementType) {
+    public String exportData(MeasurementType measurementType) {
+        String fileContent = null;
         try {
             log.info("Exporting all data of type {}", measurementType);
             List<AggregatedValue> aggregatedValueList = aggregatedValueRepository.findByTypeOrderByDayAsc(measurementType);
@@ -52,10 +53,11 @@ public class AggregatedValueControl {
             Template template = cfg.getTemplate(TEMPLATE_NAME);
             template.process(dataModel, out);
 
-            log.info("Generated Javascript export: {}", out.getBuffer());
+            fileContent = out.getBuffer().toString();
+            log.debug("Generated Javascript export: {}", fileContent);
         } catch (Exception e) {
             throw new RuntimeException("Failure while creating Javascript data file", e);
         }
+        return fileContent;
     }
-
 }
