@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertTrue;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(HtTrackerApplication.class)
 public class FileCreationSchedulerIT {
@@ -27,7 +32,7 @@ public class FileCreationSchedulerIT {
     AggregatedValueRepository aggregatedValueRepository;
 
     @Test
-    public void createDataFile_UsingEmptyDatabase() {
+    public void createDataFile_UsingEmptyDatabase() throws Exception {
         aggregatedValueRepository.deleteAll();
 
         // Run against an empty database
@@ -35,13 +40,15 @@ public class FileCreationSchedulerIT {
     }
 
     @Test
-    public void exportData() {
+    public void exportData() throws Exception {
         // Setup some test data
         setupTemperatureData();
         setupHumidityData();
 
         // Run the method under test
         objectUnderTest.createDataFile();
+
+        assertTrue(Files.exists(Paths.get("/var/tmp/httracker/data.js")));
     }
 
     private void setupTemperatureData() {
