@@ -14,6 +14,9 @@
         <h2database-version>1.4.181</h2database-version>
         <freemarker-version>2.3.23</freemarker-version>
 
+        <!-- Maven Plugin Versions -->
+        <pitest-version>1.1.7</pitest-version>
+
         <!-- Maven Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -76,6 +79,19 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest-version}</version>
+                <configuration>
+                    <targetClasses>
+                        <param>com.simonbrunner.httracker.control*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.simonbrunner.httracker*</param>
+                    </targetTests>
+                </configuration>
             </plugin>
         </plugins>
     </build>
