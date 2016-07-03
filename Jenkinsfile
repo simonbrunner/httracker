@@ -23,12 +23,12 @@ node {
     parallel (
         unittests: {
             node {
-                sh "Running unit tests"
+                echo "Running unit tests"
             }
         },
         integrationtests: {
             node {
-                sh "Running integration tests"
+                echo "Running integration tests"
             }
         }
     )
