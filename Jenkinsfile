@@ -17,7 +17,7 @@ node {
     // Finally launch the build process (without running any tests)
     sh "${mvnHome}/bin/mvn package -DskipTests=true"
 
-    # sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
-    # step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
-    # step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+    // sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
+    // step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
+    // step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 }
