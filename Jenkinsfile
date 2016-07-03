@@ -24,16 +24,17 @@ node {
         unittests: {
             node {
                 echo "Running unit tests"
+                sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore test"
             }
         },
         integrationtests: {
             node {
                 echo "Running integration tests"
+                sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
             }
         }
     )
 
-    // sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
     // step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
     // step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 }
