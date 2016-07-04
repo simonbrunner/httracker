@@ -17,11 +17,19 @@ node {
     // Finally launch the build process (without running any tests)
     sh "${mvnHome}/bin/mvn package -DskipTests=true"
 
-    // ---------------------------------------------------------------------------------- Tests
-    stage 'Test'
-    echo "Running tests"
+    // ---------------------------------------------------------------------------------- Unit tests
+    stage 'Unittest'
+    echo "Running Unittests"
+
+    sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore test"
+    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml'])
+
+    // ---------------------------------------------------------------------------------- Integration tests
+    stage 'Integrationtest'
+    echo "Running Integrationtests"
 
     sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
-    step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
-    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml'])
+    step([$class: 'JUnitResultArchiver', testResults: '**/target/failsafe-reports/*.xml'])
+
+    -- step([$class: 'ArtifactArchiver', artifacts: '**/target/*.jar', fingerprint: true])
 }
