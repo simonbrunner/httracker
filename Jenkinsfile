@@ -1,6 +1,10 @@
 node {
+    // ---------------------------------------------------------------------------------- Clean Workspace
+    stage 'Clean workspace'
+    deleteDir()
+
     // ---------------------------------------------------------------------------------- SCM Checkout
-    stage 'Checkout'
+    stage 'SCM Checkout'
 
     // Checkout code from repository
     echo "Checking out httracker from SCM"
@@ -18,14 +22,14 @@ node {
     sh "${mvnHome}/bin/mvn package -DskipTests=true"
 
     // ---------------------------------------------------------------------------------- Unit tests
-    stage 'Unittest'
+    stage 'Unittests'
     echo "Running Unittests"
 
     sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore test"
     step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml'])
 
     // ---------------------------------------------------------------------------------- Integration tests
-    stage 'Integrationtest'
+    stage 'Integrationtests'
     echo "Running Integrationtests"
 
     sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
