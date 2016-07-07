@@ -1,4 +1,4 @@
-node {
+node ("raspci") {
     // ---------------------------------------------------------------------------------- Clean Workspace
     stage 'Clean workspace'
     deleteDir()
