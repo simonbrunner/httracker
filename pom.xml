@@ -45,6 +45,13 @@
             <artifactId>freemarker</artifactId>
             <version>${freemarker-version}</version>
         </dependency>
+        <dependency>
+            <groupId>ch.jgrove</groupId>
+            <artifactId>grovepi</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <!-- FIXME move this dependency into a maven repository -->
+            <systemPath>${basedir}/grovepi-0.0.1-SNAPSHOT-jar-with-dependencies.jar</systemPath>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
